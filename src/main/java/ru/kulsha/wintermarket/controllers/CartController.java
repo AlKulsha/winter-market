@@ -5,22 +5,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.kulsha.wintermarket.dto.ProductDto;
-import ru.kulsha.wintermarket.entities.Cart;
-import ru.kulsha.wintermarket.entities.Product;
+import ru.kulsha.wintermarket.model.Cart;
 import ru.kulsha.wintermarket.services.CartService;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/v1/carts")
+@RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
 public class CartController {
-    private CartService cartService;
+    private final CartService cartService;
 
     @GetMapping
     public Cart showCart(){
-        return cartService.showCart();
+        return cartService.getCurrentCart();
     }
 
     @GetMapping("/add/{id}")
@@ -28,8 +24,13 @@ public class CartController {
         cartService.addProduct(id);
     }
 
-    @GetMapping("/delete/{id}")
-    public  void deleteProductById(@PathVariable Long id){
-        cartService.deleteById(id);
+    @GetMapping("/clear")
+    public  void clearCart(){
+        cartService.clear();
+    }
+
+    @GetMapping("/remove/{id}")
+    public  void removeFromCart(@PathVariable Long id){
+        cartService.remove(id);
     }
 }

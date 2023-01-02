@@ -4,13 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import ru.kulsha.wintermarket.converters.ProductConverter;
-import ru.kulsha.wintermarket.dto.ProductDto;
-import ru.kulsha.wintermarket.entities.Cart;
+import ru.kulsha.wintermarket.model.Cart;
 import ru.kulsha.wintermarket.entities.Product;
 import ru.kulsha.wintermarket.exceptions.ResourceNotFoundException;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,18 +22,21 @@ public class CartService {
         cart = new Cart();
     }
 
+    public Cart getCurrentCart(){
+        return cart;
+    }
+
     public void addProduct(Long id){
         Product product = productService.findById(id).orElseThrow(()->new ResourceNotFoundException("Product is not found"));
-        cart.addProduct(product);
+        cart.add(product);
     }
 
-    public Cart showCart(){
-        return cart.showCart();
+    public void clear() {
+        cart.clear();
     }
 
-    public void deleteById(Long id){
-        Product product = productService.findById(id).orElseThrow(()->new ResourceNotFoundException("Product is not found"));
-        cart.deleteProduct(product);
+    public void remove(Long productId){
+       cart.remove(productId);
     }
 
 }
