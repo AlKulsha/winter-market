@@ -45,11 +45,6 @@ public class ProductController {
         return productConverter.entityToDto(p);
     }
 
-//    @PostMapping
-//    @ResponseStatus(HttpStatus.CREATED)
-//    public void createNewProduct(@RequestBody CreateNewProductDto createNewProductDto){
-//        productService.createNewProduct(createNewProductDto);
-//    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

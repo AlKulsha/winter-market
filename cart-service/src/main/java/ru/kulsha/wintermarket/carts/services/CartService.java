@@ -27,7 +27,7 @@ public class CartService {
     }
 
     public void addProduct(Long id){
-        ProductDto product = productServiceIntegration.getProductById(id).orElseThrow(()->new ResourceNotFoundException("Product is not found"));
+        ProductDto product = productServiceIntegration.getProductById(id);
         cart.add(product);
     }
 
