@@ -9,6 +9,7 @@ import ru.kulsha.wintermarket.core.entities.OrderItem;
 import ru.kulsha.wintermarket.core.integrations.CartServiceIntegration;
 import ru.kulsha.wintermarket.core.repositories.OrderRepository;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +20,7 @@ public class OrderService {
     private final CartServiceIntegration cartServiceIntegration;
     @Transactional
     public void createOrder(String username){
-        CartDto cartDto = cartServiceIntegration.getCurrentCart();
+        CartDto cartDto = cartServiceIntegration.getCurrentCart(username);
         Order order = new Order();
         order.setUsername(username);
         order.setTotalPrice(cartDto.getTotalPrice());
@@ -33,8 +34,12 @@ public class OrderService {
                 )
         ).collect(Collectors.toList()));
         orderRepository.save(order);
-        cartServiceIntegration.clear();
+        cartServiceIntegration.clear(username);
 
+    }
+
+    public List<Order> findByUsername(String username){
+        return orderRepository.findByUsername(username);
     }
 }
 

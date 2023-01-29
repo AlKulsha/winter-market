@@ -1,6 +1,7 @@
 package ru.kulsha.wintermarket.core.controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.kulsha.wintermarket.api.ProductDto;
@@ -22,11 +23,18 @@ public class ProductController {
     private final ProductConverter productConverter;
 
     @GetMapping
-    public List<ProductDto> findAllProducts(){
-        return productService.findAll()
-                .stream()
-                .map(productConverter::entityToDto)
-                .collect(Collectors.toList());
+    public List<ProductDto> findProducts(
+            @RequestParam(required = false, name = "min_price") Integer minPrice,
+            @RequestParam(required = false, name = "min_price") Integer maxPrice,
+            @RequestParam(required = false, name = "title") String title,
+            @RequestParam(defaultValue = "1", name = "p") Integer page
+            ){
+        if(page < 1){
+            page = 1;
+        }
+        Specification<Product> spec = productService.createSpecByFilters(minPrice, maxPrice, title);
+
+        return productService.findAll(spec, page - 1).map(productConverter::entityToDto).getContent();
     }
 
 //    @GetMapping("/{id}")

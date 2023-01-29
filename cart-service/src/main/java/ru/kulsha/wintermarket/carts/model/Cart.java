@@ -3,6 +3,7 @@ package ru.kulsha.wintermarket.carts.model;
 import lombok.Data;
 import ru.kulsha.wintermarket.api.ProductDto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,14 +11,10 @@ import java.util.List;
 @Data
 public class Cart {
     private List<CartItem> items;
-    private int totalPrice;
+    private BigDecimal totalPrice;
 
     public Cart() {
         this.items = new ArrayList<>();
-    }
-
-    public List<CartItem> getItems(){
-        return Collections.unmodifiableList(items);
     }
 
     public void add(ProductDto product){
@@ -33,15 +30,15 @@ public class Cart {
     }
 
     private void recalculate(){
-        totalPrice = 0;
+        totalPrice = BigDecimal.ZERO;
         for (CartItem item : items) {
-            totalPrice += item.getPrice();
+            totalPrice = totalPrice.add(item.getPrice());
         }
     }
 
     public void clear(){
         items.clear();
-        totalPrice = 0;
+        totalPrice = BigDecimal.ZERO;
     }
 
     public void remove(Long productId){
