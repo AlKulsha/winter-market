@@ -26,8 +26,5 @@ angular.module('market').controller('storeController', function ($scope, $http, 
            .then(function(response){
         });
    };
-
-
-
     $scope.loadProducts();
 });

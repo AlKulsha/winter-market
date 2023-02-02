@@ -10,6 +10,7 @@ import ru.kulsha.wintermarket.core.integrations.CartServiceIntegration;
 import ru.kulsha.wintermarket.core.repositories.OrderRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +41,9 @@ public class OrderService {
 
     public List<Order> findByUsername(String username){
         return orderRepository.findByUsername(username);
+    }
+    public Optional<Order> findById(Long id) {
+        return orderRepository.findById(id);
     }
 }
 
