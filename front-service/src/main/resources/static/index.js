@@ -1,4 +1,65 @@
-angular.module('market', ['ngStorage']).controller('indexController', function($scope, $http, $localStorage){
+(function () {
+    angular
+        .module('market', ['ngRoute', 'ngStorage'])
+        .config(config)
+        .run(run);
+
+    function config($routeProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'welcome/welcome.html',
+                controller: 'welcomeController'
+            })
+            .when('/store', {
+                templateUrl: 'store/store.html',
+                controller: 'storeController'
+            })
+            .when('/cart', {
+                templateUrl: 'cart/cart.html',
+                controller: 'cartController'
+            })
+            .when('/orders', {
+                templateUrl: 'orders/orders.html',
+                controller: 'ordersController'
+            })
+             .when('/registration', {
+                    templateUrl: 'registration/registration.html',
+                    controller: 'registrationController'
+             })
+            .otherwise({
+                redirectTo: '/'
+            });
+    }
+
+    function run($rootScope, $http, $localStorage) {
+        if ($localStorage.winterMarketUser) {
+            try {
+                let jwt = $localStorage.winterMarketUser.token;
+                let payload = JSON.parse(atob(jwt.split('.')[1]));
+                let currentTime = parseInt(new Date().getTime() / 1000);
+                if (currentTime > payload.exp) {
+                    console.log("Token is expired!!!");
+                    delete $localStorage.winterMarketUser;
+                    $http.defaults.headers.common.Authorization = '';
+                }
+            } catch (e) {
+            }
+
+            if ($localStorage.winterMarketUser) {
+                $http.defaults.headers.common.Authorization = 'Bearer ' + $localStorage.winterMarketUser.token;
+            }
+        }
+        if (!$localStorage.winterMarketGuestCartId) {
+            $http.get('http://localhost:5555/cart/api/v1/cart/generate_uuid')
+                .then(function (response) {
+                    $localStorage.winterMarketGuestCartId = response.data.value;
+                });
+        }
+    }
+})();
+
+
+angular.module('market').controller('indexController', function($scope, $http, $localStorage){
 
     $scope.tryToAuth = function(){
              $http.post('http://localhost:5555/auth/auth', $scope.user)
@@ -9,6 +70,7 @@ angular.module('market', ['ngStorage']).controller('indexController', function($
 
                         $scope.user.username = null;
                         $scope.user.password = null;
+                        $location.path('/');
                     }
                 }, function errorCallback(response){
                 });
@@ -17,6 +79,7 @@ angular.module('market', ['ngStorage']).controller('indexController', function($
     $scope.tryToLogout = function(){
         $scope.clearUser();
         $scope.user = null;
+        $location.path('/');
     };
 
     $scope.clearUser = function(){
@@ -31,81 +94,6 @@ angular.module('market', ['ngStorage']).controller('indexController', function($
             return false;
         }
     };
-
-//*************************************************
-
-     $scope.loadProducts = function(){
-         $http.get('http://localhost:5555/core/api/v1/products')
-            .then(function(response){
-                 $scope.productsList = response.data;
-            });
-     };
-
-    $scope.createOrder = function(){
-          $http.post('http://localhost:5555/core/api/v1/orders')
-             .then(function(response){
-                  alert('The order was created');
-                  $scope.loadCart();
-             });
-      };
-
-    $scope.deleteProductById = function(productId){
-          $http.delete('http://localhost:5555/core/api/v1/products/' + productId)
-              .then(function(response){
-                 $scope.loadProducts();
-              });
-    };
-
-    $scope.showProductInfo = function(productId){
-        $http.get('http://localhost:5555/core/api/v1/products/' + productId)
-            .then(function(response){
-             alert(response.data.title);
-        });
-    };
-
-    $scope.createNewProduct = function(){
-        $http.post('http://localhost:5555/core/api/v1/products/', $scope.newProduct)
-            .then(function(response){
-                $scope.newProduct = null;
-                $scope.loadProducts();
-            });
-    };
-
-
-//************************************************************************
-
-     $scope.loadCart = function(){
-          $http.get('http://localhost:5555/cart/api/v1/cart')
-                 .then(function(response){
-                      $scope.cart = response.data;
-                 });
-     };
-
-    $scope.addProductToCart = function(productId){
-         $http.get('http://localhost:5555/cart/api/v1/cart/add/' + productId)
-            .then(function(){
-                $scope.loadCart();
-         });
-    };
-
-     $scope.clearCart = function(){
-             $http.get('http://localhost:5555/cart/api/v1/cart/clear')
-                .then(function(){
-                    $scope.loadCart();
-             });
-     };
-
-     $scope.removeFromCart = function(productId){
-           $http.get('http://localhost:5555/cart/api/v1/cart/remove/' + productId)
-               .then(function(response){
-                  $scope.loadCart();
-               });
-     };
-
-
-    $scope.loadProducts();
-    $scope.loadCart();
-
 });
 
 
