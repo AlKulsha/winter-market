@@ -1,5 +1,6 @@
 package ru.kulsha.wintermarket.core.entities;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 @Table(name="categories")
 @NoArgsConstructor
-public class Category {
+public class Category{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
