@@ -25,7 +25,13 @@ public class Cart {
                 return;
             }
         }
-        items.add(new CartItem(product.getId(), product.getTitle(), 1, product.getPrice(), product.getPrice()));
+        items.add(CartItem.builder()
+                .productId(product.getId())
+                .productTitle(product.getTitle())
+                .quantity(1)
+                .price(product.getPrice())
+                .pricePerProduct(product.getPrice()).build());
+//        items.add(new CartItem(product.getId(), product.getTitle(), 1, product.getPrice(), product.getPrice()));
         recalculate();
     }
 

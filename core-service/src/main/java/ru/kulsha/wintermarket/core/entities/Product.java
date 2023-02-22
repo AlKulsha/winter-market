@@ -1,5 +1,6 @@
 package ru.kulsha.wintermarket.core.entities;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
